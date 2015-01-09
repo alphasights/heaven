@@ -22,6 +22,7 @@ gem "hipchat"
 gem "campfiyah"
 gem "slack-notifier"
 gem "flowdock"
+gem "librato-metrics"
 
 group :development, :test do
   gem "pry"
