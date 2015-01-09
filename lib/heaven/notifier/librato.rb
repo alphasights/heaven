@@ -9,8 +9,12 @@ module Heaven
         librato_client.annotate(:deployments, "Deploy #{number}: #{state}", {
           source: [repo_name, environment].join("."),
           description: message,
-          links: [repo_url, commitish_url, target_url]
+          links: [{ rel: "Repository", href: repo_url},
+                  { rel: "Commit", href: commitish_url },
+                  { rel: "Target", href: target_url}]
         })
+
+        Rails.logger.info "librato: #{message}"
       end
 
       def default_message
