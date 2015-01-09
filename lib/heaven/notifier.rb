@@ -3,22 +3,15 @@ require "heaven/notifier/campfire"
 require "heaven/notifier/hipchat"
 require "heaven/notifier/flowdock"
 require "heaven/notifier/slack"
+require "heaven/notifier/librato"
 
 module Heaven
   # The Notifier module
   module Notifier
     def self.for(payload)
-      if slack?
-        ::Heaven::Notifier::Slack.new(payload)
-      elsif hipchat?
-        ::Heaven::Notifier::Hipchat.new(payload)
-      elsif flowdock?
-        ::Heaven::Notifier::Flowdock.new(payload)
-      elsif Rails.env.test?
-        # noop on posting
-      else
-        ::Heaven::Notifier::Campfire.new(payload)
-      end
+      %i(flowdock librato slack hipchat campfire).map { |notifier|
+        "::Heaven::Notifier::#{notifier.capitalize}".constantize.new(payload) if send("#{notifier}?")
+      }.compact
     end
 
     def self.slack?
@@ -31,6 +24,14 @@ module Heaven
 
     def self.flowdock?
       !ENV["FLOWDOCK_USER_API_TOKEN"].nil?
+    end
+
+    def self.librato?
+      !ENV["LIBRATO_EMAIL"].nil?
+    end
+
+    def self.campfire?
+      !ENV["CAMPFIRE_TOKEN"].nil?
     end
   end
 end

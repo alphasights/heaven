@@ -5,8 +5,9 @@ module Heaven
       @queue = :deployment_statuses
 
       def self.perform(payload)
-        notifier = Heaven::Notifier.for(payload)
-        notifier.post! if notifier
+        Heaven::Notifier.for(payload).each do |notifier|
+          notifier.post!
+        end
       end
     end
   end
