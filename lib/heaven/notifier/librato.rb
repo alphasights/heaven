@@ -11,7 +11,7 @@ module Heaven
           description: message,
           links: [{ rel: "Repository", href: repo_url},
                   { rel: "Commit", href: commitish_url },
-                  { rel: "Target", href: target_url}]
+                  { rel: "Log", href: target_url }]
         })
 
         Rails.logger.info "librato: #{message}"
@@ -38,7 +38,7 @@ module Heaven
       end
 
       def commitish_url
-        repo_url("commit/#{sha}")
+        repo_url("/commit/#{sha}")
       end
     end
   end
