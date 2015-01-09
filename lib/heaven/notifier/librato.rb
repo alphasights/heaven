@@ -6,7 +6,7 @@ module Heaven
         # now so pending doesn't do anything for us.
         return if pending?
 
-        librato_client.annotation(:deployments, "Deploy #{number}: #{state}", {
+        librato_client.annotate(:deployments, "Deploy #{number}: #{state}", {
           source: [repo_name, environment].join("."),
           description: message,
           links: [repo_url, commitish_url, target_url]
@@ -28,7 +28,9 @@ module Heaven
       private
 
       def librato_client
-        @librato_client ||= ::Librato::Metrics.authenticate(ENV["LIBRATO_EMAIL"], ENV["LIBRATO_API_KEY"])
+        @librato_client ||= ::Librato::Metrics::Client.new.tap do |client|
+          client.authenticate(ENV["LIBRATO_EMAIL"], ENV["LIBRATO_API_KEY"])
+        end
       end
 
       def commitish_url
